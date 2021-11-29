@@ -134,3 +134,135 @@ h1 {
 }
 ```
 
+
+```js
+/**
+ * props和state的区别
+ * - props是组件对外的接口，state是组件对内的接口
+ * - props用于组件间数据传递，state用于组件内部的数据传递
+ * - state是私有的，可以认为state是组件的“私有属性”，需要用setState()修改state
+ * - 本质上，props就是传入函数的参数，是传入组件内部的数据，更确切地说，是从父组件传递向子组件的数据
+ *
+ * immutable（不变的）：对象一旦创建就不可改变，只能通过销毁、重建来改变数据，通过判断内存地址是否一致，来确认对象是否有经过修改。
+ * - props是只读属性
+ * - 函数式编程
+ *
+ */
+```
+
+### React 生命周期
+```jsx
+import React from 'react'
+import logo from './assets/images/logo.svg'
+import robots from './mockdata/robots.json'
+import Robot from './components/Robot'
+import styles from './App.module.css'
+import ShoppingCart from './components/ShoppingCart'
+import { count } from 'console'
+
+interface Props {}
+
+interface State {
+  robotGallery: any[]
+  count: number
+}
+
+class App extends React.Component<Props, State> {
+  // * 生命周期第一阶段： 初始化
+  // 初始化组件 state
+  constructor(props: Props) {
+    super(props)
+    this.state = {
+      robotGallery: [],
+      count: 0,
+    }
+  }
+
+  // 在组件创建好dom元素以后、挂载进页面的时候调用
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((response) => response.json())
+      .then((data) => this.setState({ robotGallery: data }))
+  }
+
+  // * 生命周期第二阶段： 更新
+  // 在组件接收到一个新的 prop (更新后)时被调用。
+  // componentWillReceiveProps
+
+  // componentWillReceiveProps已经被废弃，替代品：
+  // state getDerivedStateFromProps(nextProps, prevState){}
+
+  // shouldComponentUpdate(nextProps, nextState){
+  //   return nextState.some !== this.state.some
+  // }
+
+  // 组件更新后调用
+  componentDidUpdate() {}
+
+  // * 生命周期第三阶段： 销毁
+  // 组件销毁后调用，
+  // 可以当作析构函数 destructor 来使用
+  componentWillUnmount() {}
+
+  render() {
+    return (
+      <div className={styles.app}>
+        <div className={styles.appHeader}>
+          <img src={logo} className={styles.appLogo} alt="logo" />
+          <h1>罗伯特机器人炫酷吊炸天online购物平台的名字要长</h1>
+        </div>
+        <button
+          onClick={() => {
+            /**
+             * setState到底是同步还是异步的？——异步更新，同步执行，setState本身并不是异步的，但对state的处理机制给人一一种
+             * 异步的假象，state处理一般发生在生命周期变化的时候。
+             */
+            // this.setState(
+            //   {
+            //     count: this.state.count + 1,
+            //   },
+            //   () => console.log(this.state.count)
+            // )
+            // this.setState(
+            //   {
+            //     count: this.state.count + 1,
+            //   },
+            //   () => console.log(this.state.count)
+            // )
+
+            // 解决方法：
+            this.setState(
+              (preState, preProps) => {
+                return { count: preState.count + 1 }
+              },
+              () => {
+                console.log('count ', this.state.count)
+              }
+            )
+            this.setState(
+              (preState, preProps) => {
+                return { count: preState.count + 1 }
+              },
+              () => {
+                console.log('count ', this.state.count)
+              }
+            )
+          }}
+        >
+          Click
+        </button>
+        <span>count: {this.state.count}</span>
+        <ShoppingCart />
+        <div className={styles.robotList}>
+          {this.state.robotGallery.map((r) => (
+            <Robot id={r.id} email={r.email} name={r.name} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+}
+
+export default App
+
+```

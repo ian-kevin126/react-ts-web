@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import logo from './assets/images/logo.svg'
 import robots from './mockdata/robots.json'
 import Robot from './components/Robot'
+import RobotDiscount from './components/RobotDiscount'
 import styles from './App.module.css'
 import ShoppingCart from './components/ShoppingCart'
-import { count } from 'console'
 
 interface Props {}
 
@@ -13,100 +13,67 @@ interface State {
   count: number
 }
 
-class App extends React.Component<Props, State> {
-  // * 生命周期第一阶段： 初始化
-  // 初始化组件 state
-  constructor(props: Props) {
-    super(props)
-    this.state = {
-      robotGallery: [],
-      count: 0,
+const App: React.FC = (props) => {
+  const [count, setCount] = useState<number>(0)
+  const [robotGallery, setRobotGallery] = useState<any>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>()
+
+  useEffect(() => {
+    document.title = `点击${count}次`
+  }, [count])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        const responses = await fetch(
+          'https://jsonplaceholder.typicode.com/users'
+        )
+        // .then(response => response.json())
+        // .then(data => setRobotGallery(data))
+        const data = await responses.json()
+        setRobotGallery(data)
+      } catch (e) {
+        setError(e.message)
+      }
+      setLoading(false)
     }
-  }
 
-  // 在组件创建好dom元素以后、挂载进页面的时候调用
-  componentDidMount() {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then((response) => response.json())
-      .then((data) => this.setState({ robotGallery: data }))
-  }
+    fetchData()
+  }, [])
 
-  // * 生命周期第二阶段： 更新
-  // 在组件接收到一个新的 prop (更新后)时被调用。
-  // componentWillReceiveProps
-
-  // componentWillReceiveProps已经被废弃，替代品：
-  // state getDerivedStateFromProps(nextProps, prevState){}
-
-  // shouldComponentUpdate(nextProps, nextState){
-  //   return nextState.some !== this.state.some
-  // }
-
-  // 组件更新后调用
-  componentDidUpdate() {}
-
-  // * 生命周期第三阶段： 销毁
-  // 组件销毁后调用，
-  // 可以当作析构函数 destructor 来使用
-  componentWillUnmount() {}
-
-  render() {
-    return (
-      <div className={styles.app}>
-        <div className={styles.appHeader}>
-          <img src={logo} className={styles.appLogo} alt="logo" />
-          <h1>罗伯特机器人炫酷吊炸天online购物平台的名字要长</h1>
-        </div>
-        <button
-          onClick={() => {
-            /**
-             * setState到底是同步还是异步的？——异步更新，同步执行，setState本身并不是异步的，但对state的处理机制给人一一种
-             * 异步的假象，state处理一般发生在生命周期变化的时候。
-             */
-            // this.setState(
-            //   {
-            //     count: this.state.count + 1,
-            //   },
-            //   () => console.log(this.state.count)
-            // )
-            // this.setState(
-            //   {
-            //     count: this.state.count + 1,
-            //   },
-            //   () => console.log(this.state.count)
-            // )
-
-            // 解决方法：
-            this.setState(
-              (preState, preProps) => {
-                return { count: preState.count + 1 }
-              },
-              () => {
-                console.log('count ', this.state.count)
-              }
-            )
-            this.setState(
-              (preState, preProps) => {
-                return { count: preState.count + 1 }
-              },
-              () => {
-                console.log('count ', this.state.count)
-              }
-            )
-          }}
-        >
-          Click
-        </button>
-        <span>count: {this.state.count}</span>
-        <ShoppingCart />
-        <div className={styles.robotList}>
-          {this.state.robotGallery.map((r) => (
-            <Robot id={r.id} email={r.email} name={r.name} />
-          ))}
-        </div>
+  return (
+    <div className={styles.app}>
+      <div className={styles.appHeader}>
+        <img src={logo} className={styles.appLogo} alt="logo" />
+        <h1>罗伯特机器人炫酷吊炸天online购物平台的名字要长</h1>
       </div>
-    )
-  }
+      <button
+        onClick={() => {
+          setCount(count + 1)
+        }}
+      >
+        Click
+      </button>
+      <span>count: {count}</span>
+      <ShoppingCart />
+      {(!error || error !== '') && <div>网站出错：{error}</div>}
+      {!loading ? (
+        <div className={styles.robotList}>
+          {robotGallery.map((r, index) =>
+            index % 2 == 0 ? (
+              <RobotDiscount id={r.id} email={r.email} name={r.name} />
+            ) : (
+              <Robot id={r.id} email={r.email} name={r.name} />
+            )
+          )}
+        </div>
+      ) : (
+        <h2>loading 加载中</h2>
+      )}
+    </div>
+  )
 }
 
 export default App
