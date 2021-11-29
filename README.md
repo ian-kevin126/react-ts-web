@@ -266,3 +266,290 @@ class App extends React.Component<Props, State> {
 export default App
 
 ```
+
+## React Hooks
+### useEffect 的使用
+```jsx
+import React, { useState, useEffect } from 'react'
+import logo from './assets/images/logo.svg'
+import robots from './mockdata/robots.json'
+import Robot from './components/Robot'
+import RobotDiscount from './components/RobotDiscount'
+import styles from './App.module.css'
+import ShoppingCart from './components/ShoppingCart'
+
+interface Props {}
+
+interface State {
+  robotGallery: any[]
+  count: number
+}
+
+const App: React.FC = (props) => {
+  const [count, setCount] = useState<number>(0)
+  const [robotGallery, setRobotGallery] = useState<any>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>()
+
+  useEffect(() => {
+    document.title = `点击${count}次`
+  }, [count])
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const responses = await fetch(
+        'https://jsonplaceholder.typicode.com/users'
+      )
+      // .then(response => response.json())
+      // .then(data => setRobotGallery(data))
+      const data = await responses.json()
+      setRobotGallery(data)
+    } catch (e) {
+      // setError(e.message)
+    }
+    setLoading(false)
+  }
+
+  return (
+    <div className={styles.app}>
+      <div className={styles.appHeader}>
+        <img src={logo} className={styles.appLogo} alt="logo" />
+        <h1>罗伯特机器人炫酷吊炸天online购物平台的名字要长</h1>
+      </div>
+      <button
+        onClick={() => {
+          setCount(count + 1)
+        }}
+      >
+        Click
+      </button>
+      <span>count: {count}</span>
+      <ShoppingCart />
+      {(!error || error !== '') && <div>网站出错：{error}</div>}
+      {!loading ? (
+        <div className={styles.robotList}>
+          {robotGallery.map((r, index) =>
+            index % 2 == 0 ? (
+              <RobotDiscount
+                key={r.id}
+                id={r.id}
+                email={r.email}
+                name={r.name}
+              />
+            ) : (
+              <Robot key={r.id} id={r.id} email={r.email} name={r.name} />
+            )
+          )}
+        </div>
+      ) : (
+        <h2>loading 加载中</h2>
+      )}
+    </div>
+  )
+}
+
+export default App
+```
+
+### useContext 的使用
+AppState.ts
+```tsx
+import React, { useState } from 'react'
+
+interface AppStateValue {
+  username: string
+  shoppingCart: { items: { id: number; name: string }[] }
+}
+
+const defaultContextValue: AppStateValue = {
+  username: 'kevinliao',
+  shoppingCart: { items: [] },
+}
+
+export const appContext = React.createContext(defaultContextValue)
+export const appSetStateContext = React.createContext<
+  React.Dispatch<React.SetStateAction<AppStateValue>> | undefined
+>(undefined)
+
+export const AppStateProvider: React.FC = (props) => {
+  const [state, setState] = useState(defaultContextValue)
+
+  return (
+    <appContext.Provider value={state}>
+      <appSetStateContext.Provider value={setState}>
+        {props.children}
+      </appSetStateContext.Provider>
+    </appContext.Provider>
+  )
+}
+```
+
+```ts
+// index.tsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import App from './App'
+import reportWebVitals from './reportWebVitals'
+import { AppStateProvider } from './AppState'
+
+ReactDOM.render(
+  <React.StrictMode>
+    <AppStateProvider>
+      <App />
+    </AppStateProvider>
+  </React.StrictMode>,
+  document.getElementById('root')
+)
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals()
+```
+
+```tsx
+import React, { useContext } from 'react'
+import styles from './Robot.module.css'
+import { appContext, appSetStateContext } from '../AppState'
+import { withAddToCart } from './AddToCart'
+
+export interface RobotProps {
+  id: number
+  name: string
+  email: string
+  addToCart: (id, name) => void
+}
+
+const Robot: React.FC<RobotProps> = ({ id, name, email, addToCart }) => {
+  const value = useContext(appContext)
+
+  return (
+    <div className={styles.cardContainer}>
+      <img alt="robot" src={`https://robohash.org/${id}`} />
+      <h2>{name}</h2>
+      <p>{email}</p>
+      <p>作者：{value.username}</p>
+      <button onClick={() => addToCart(id, name)}>加入购物车</button>
+    </div>
+  )
+}
+
+export default withAddToCart(Robot)
+
+```
+
+```tsx
+import React from 'react'
+import styles from './ShoppingCart.module.css'
+import { FiShoppingCart } from 'react-icons/fi'
+import { appContext } from '../AppState'
+
+interface Props {}
+
+interface State {
+  isOpen: boolean
+}
+
+class ShoppingCart extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+    this.state = {
+      isOpen: false,
+    }
+  }
+
+  handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    // e.target：描述的是时间发生的元素
+    // e.currentTarget：描述的是事件处理绑定的元素
+    console.log('e.target ', e.target)
+    console.log('e.currentTarget ', e.currentTarget)
+    if ((e.target as HTMLElement).nodeName === 'SPAN') {
+      this.setState({ isOpen: !this.state.isOpen })
+    }
+  }
+
+  render() {
+    return (
+      <appContext.Consumer>
+        {(value) => {
+          return (
+            <div className={styles.cartContainer}>
+              <button className={styles.button} onClick={this.handleClick}>
+                <FiShoppingCart />
+                <span>购物车 {value.shoppingCart.items.length} (件)</span>
+              </button>
+              <div
+                className={styles.cartDropDown}
+                style={{
+                  display: this.state.isOpen ? 'block' : 'none',
+                }}
+              >
+                <ul>
+                  {value.shoppingCart.items.map((i) => (
+                    <li>{i.name}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )
+        }}
+      </appContext.Consumer>
+    )
+  }
+}
+
+export default ShoppingCart
+```
+
+```tsx
+import React, { useContext } from 'react'
+import { appSetStateContext } from '../AppState'
+import { RobotProps } from './Robot'
+
+export const withAddToCart = (
+  ChildComponent: React.ComponentType<RobotProps>
+) => {
+  // return class extends React.Component {}
+  return (props) => {
+    const setState = useContext(appSetStateContext)
+    const addToCart = (id, name) => {
+      if (setState) {
+        // 思考: 同学们可以想一想如何化简这里的代码
+        setState((state) => {
+          return {
+            ...state,
+            shoppingCart: {
+              items: [...state.shoppingCart.items, { id, name }],
+            },
+          }
+        })
+      }
+    }
+    return <ChildComponent {...props} addToCart={addToCart} />
+  }
+}
+
+export const useAddToCart = () => {
+  const setState = useContext(appSetStateContext)
+  const addToCart = (id, name) => {
+    if (setState) {
+      // 思考: 同学们可以想一想如何化简这里的代码
+      setState((state) => {
+        return {
+          ...state,
+          shoppingCart: {
+            items: [...state.shoppingCart.items, { id, name }],
+          },
+        }
+      })
+    }
+  }
+  return addToCart
+}
+```

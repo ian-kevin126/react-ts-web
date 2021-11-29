@@ -24,24 +24,24 @@ const App: React.FC = (props) => {
   }, [count])
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      try {
-        const responses = await fetch(
-          'https://jsonplaceholder.typicode.com/users'
-        )
-        // .then(response => response.json())
-        // .then(data => setRobotGallery(data))
-        const data = await responses.json()
-        setRobotGallery(data)
-      } catch (e) {
-        setError(e.message)
-      }
-      setLoading(false)
-    }
-
     fetchData()
   }, [])
+
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const responses = await fetch(
+        'https://jsonplaceholder.typicode.com/users'
+      )
+      // .then(response => response.json())
+      // .then(data => setRobotGallery(data))
+      const data = await responses.json()
+      setRobotGallery(data)
+    } catch (e) {
+      // setError(e.message)
+    }
+    setLoading(false)
+  }
 
   return (
     <div className={styles.app}>
@@ -63,9 +63,14 @@ const App: React.FC = (props) => {
         <div className={styles.robotList}>
           {robotGallery.map((r, index) =>
             index % 2 == 0 ? (
-              <RobotDiscount id={r.id} email={r.email} name={r.name} />
+              <RobotDiscount
+                key={r.id}
+                id={r.id}
+                email={r.email}
+                name={r.name}
+              />
             ) : (
-              <Robot id={r.id} email={r.email} name={r.name} />
+              <Robot key={r.id} id={r.id} email={r.email} name={r.name} />
             )
           )}
         </div>
