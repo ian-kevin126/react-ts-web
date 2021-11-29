@@ -18,8 +18,6 @@ class ShoppingCart extends React.Component<Props, State> {
   }
 
   handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    // e.target：描述的是时间发生的元素
-    // e.currentTarget：描述的是事件处理绑定的元素
     console.log('e.target ', e.target)
     console.log('e.currentTarget ', e.currentTarget)
     if ((e.target as HTMLElement).nodeName === 'SPAN') {
