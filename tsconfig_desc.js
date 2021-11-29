@@ -1,7 +1,3 @@
-# Getting Started with Create React App
-
-## tsconfig.json 配置
-```json
 {
   "compilerOptions": {
     "noImplicitAny": false, // 是否显式声明变量为any类型，配置为false可以实现js和ts的混编
@@ -58,7 +54,6 @@
       "typescript.enablePromptUseWorkspaceTsdk": true
     }
     这样，我们在写css样式的时候，也可以得到智能提示了。
-    有时候不生效，可参考：https://blog.csdn.net/bidang3275/article/details/119571270
     **/
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
@@ -82,55 +77,3 @@
   **/
   // "exclude": []
 }
-
-```
-
-## css 模组化
-在src文件夹下面新建一个 custom.d.ts 声明文件：
-```js
-/**
- * 声明css文件为模组化的文件，这样就可以以下面的方式导入
- * import styles from './index.css
- */
-
-declare module "*.css" {
-  const css: { [key: string]: string };
-  export default css;
-}
-```
-然后将所有的css文件改成 .module.css后缀。
-还可以使用 typescript-plugin-css-modules 插件实现className的智能提示。
-
-## 加载媒体与字体文件
-图片类型的文件已经被react提前声明好了，我们不需要再做处理，只需要直接引用就好了。
-### 字体的使用
-在顶级组件中的index.css中定义字体，然后子组件中就都可以使用了：
-```css
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: cadetblue;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-@font-face {
-  font-family: 'Slidefu';
-  src: local('Slidefu'), url(./assets/fonts/Slidefu-Regular-2.ttf) format('truetype');
-}
-```
-然后再App.module.css中使用
-```css
-h1 {
-  font-family: 'Slidefu';
-  font-size: 72px;
-}
-```
-
