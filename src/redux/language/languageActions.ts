@@ -11,6 +11,7 @@ interface AddLanguageAction {
   payload: { name: string; code: string };
 }
 
+// 导出给languageReducer.ts使用
 export type LanguageActionTypes = ChangeLanguageAction | AddLanguageAction;
 
 export const changeLanguageActionCreator = (

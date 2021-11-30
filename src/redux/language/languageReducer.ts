@@ -1,11 +1,16 @@
 import i18n from "i18next";
-import { CHANGE_LANGUAGE, ADD_LANGUAGE, LanguageActionTypes } from "./languageActions";
+import {
+  CHANGE_LANGUAGE,
+  ADD_LANGUAGE,
+  LanguageActionTypes,
+} from "./languageActions";
 
 export interface LanguageState {
   language: "en" | "zh";
   languageList: { name: string; code: string }[];
 }
 
+// 初始化state
 const defaultState: LanguageState = {
   language: "zh",
   languageList: [
@@ -14,7 +19,7 @@ const defaultState: LanguageState = {
   ],
 };
 
-export default (state = defaultState, action: LanguageActionTypes) => {
+const languageReducer = (state = defaultState, action: LanguageActionTypes) => {
   switch (action.type) {
     case CHANGE_LANGUAGE:
       i18n.changeLanguage(action.payload); // 这样处理是不标准的，有副作用
@@ -28,3 +33,5 @@ export default (state = defaultState, action: LanguageActionTypes) => {
       return state;
   }
 };
+
+export default languageReducer;

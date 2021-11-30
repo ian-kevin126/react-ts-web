@@ -30,10 +30,23 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const params = useParams();
   const match = useRouteMatch();
+
+  // useSelector 可以帮助我们连接store里面的数据
+  // const language = useSelector((state: RootState) => state.language.language);
+  /**
+   * 这里我们每次使用 useSelector 都要从 store.ts 中去导入RootState类型定义，这将使得我们的组件与store绑定起来了，而
+   * 组件与state的绑定会使得这个组件与state深度耦合，无法再被复用，这显然不是我们乐见的。这时候，我们就需要将RootState
+   * 从组件中提取出来。基本的方法是使用 TypedUseSelectorHook 这个interface来使我们的store类型重新定义。
+   *
+   * 在hoohs.ts中重新定义了useSelector这个hooks，这样我们就不需要在每次使用的时候都去再重新定义一遍state的类型。
+   */
   const language = useSelector((state) => state.language.language);
   const languageList = useSelector((state) => state.language.languageList);
+
+  // dispatch函数分发事件
+  // const dispatch = useDispatch<Dispatch<LanguageActionTypes>>();   虽然这样定义看起来更严谨，但实际上没有必要，破坏了灵活性。
   const dispatch = useDispatch();
-  // const dispatch = useDispatch<Dispatch<LanguageActionTypes>>();
+
   const { t } = useTranslation();
 
   const jwt = useSelector((s) => s.user.token);
@@ -70,6 +83,7 @@ export const Header: React.FC = () => {
       <div className={styles["top-header"]}>
         <div className={styles.inner}>
           <Typography.Text>{t("header.slogan")}</Typography.Text>
+          {/* 切换网站语言 */}
           <Dropdown.Button
             style={{ marginLeft: 15 }}
             overlay={

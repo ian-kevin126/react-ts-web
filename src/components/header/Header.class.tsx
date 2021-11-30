@@ -4,7 +4,7 @@ import logo from "../../assets/logo.svg";
 import { Layout, Typography, Input, Menu, Button, Dropdown } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { RootState } from "../../redux/store";
+import store, { RootState } from "../../redux/store";
 import { withTranslation, WithTranslation } from "react-i18next";
 import {
   addLanguageActionCreator,
@@ -12,13 +12,14 @@ import {
 } from "../../redux/language/languageActions";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
+import getStoredState from "redux-persist/es/getStoredState";
 
 const mapStateToProps = (state: RootState) => {
   return {
     language: state.language.language,
-    languageList: state.language.languageList
-  }
-}
+    languageList: state.language.languageList,
+  };
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
@@ -35,10 +36,29 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 
 type PropsType = RouteComponentProps & // react-router 路由props类型
   WithTranslation & // i18n props类型
-  ReturnType<typeof mapStateToProps> & // redux store 映射类型 
-  ReturnType<typeof mapDispatchToProps>; // redux dispatch 映射类型 
+  ReturnType<typeof mapStateToProps> & // redux store 映射类型
+  ReturnType<typeof mapDispatchToProps>; // redux dispatch 映射类型
 
-class HeaderComponnet extends React.Component<PropsType> {
+class HeaderComponent extends React.Component<PropsType> {
+  // 获取store里面的state，这种方式非常复杂，也不利于维护，我们可以将其改造为函数式组件 —— Header.tsx
+  // constructor(props) {
+  //   super(props);
+  //   const storeState = store.getState();
+  //   this.state = {
+  //     language: storeState.language,
+  //     languageList: storeState.languageList,
+  //   };
+
+  //   组件监听store变化
+  //   store.subScribe(this.handleStoreChange)
+  // }
+
+  // handleStoreChange = () => {
+  //   const storeState = store.getState();
+  //   this.setState({
+  //     language: getStoredState.language,
+  //   });
+  // };
 
   menuClickHandler = (e) => {
     console.log(e);
@@ -46,25 +66,27 @@ class HeaderComponnet extends React.Component<PropsType> {
       // 处理新语言添加action
       this.props.addLanguage("新语言", "new_lang");
     } else {
-      this.props.changeLanguage(e.key)
+      this.props.changeLanguage(e.key);
     }
   };
 
   render() {
-    const { history, t } = this.props;
+    const { history, t, languageList, language } = this.props;
     return (
       <div className={styles["app-header"]}>
         {/* top-header */}
         <div className={styles["top-header"]}>
           <div className={styles.inner}>
             <Typography.Text>{t("header.slogan")}</Typography.Text>
+            {/* 语言切换功能 */}
             <Dropdown.Button
               style={{ marginLeft: 15 }}
               overlay={
                 <Menu onClick={this.menuClickHandler}>
-                  {this.props.languageList.map((l) => {
+                  {languageList.map((l) => {
                     return <Menu.Item key={l.code}>{l.name}</Menu.Item>;
                   })}
+                  {/* 添加新语言 */}
                   <Menu.Item key={"new"}>
                     {t("header.add_new_language")}
                   </Menu.Item>
@@ -72,7 +94,7 @@ class HeaderComponnet extends React.Component<PropsType> {
               }
               icon={<GlobalOutlined />}
             >
-              {this.props.language === "zh" ? "中文" : "English"}
+              {language === "zh" ? "中文" : "English"}
             </Dropdown.Button>
             <Button.Group className={styles["button-group"]}>
               <Button onClick={() => history.push("register")}>
@@ -119,6 +141,7 @@ class HeaderComponnet extends React.Component<PropsType> {
   }
 }
 
-export const Header = connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withRouter(HeaderComponnet))
-);
+export const Header = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withTranslation()(withRouter(HeaderComponent)));
