@@ -27,6 +27,9 @@ interface MatchParams {
   touristRouteId: string;
 }
 
+/**
+ * 由于要向详情组件传递id，需要将组件的泛型属性定义为：RouteComponentProps
+ */
 export const DetailPage: React.FC<RouteComponentProps<MatchParams>> = () => {
   const { touristRouteId } = useParams<MatchParams>();
   // const [loading, setLoading] = useState<boolean>(true);
@@ -39,12 +42,13 @@ export const DetailPage: React.FC<RouteComponentProps<MatchParams>> = () => {
 
   const dispatch = useDispatch();
 
-  const jwt = useSelector(s => s.user.token) as string
-  const shoppingCartLoading = useSelector(s => s.shoppingCart.loading)
+  const jwt = useSelector((s) => s.user.token) as string;
+  const shoppingCartLoading = useSelector((s) => s.shoppingCart.loading);
 
   useEffect(() => {
     dispatch(getProductDetail(touristRouteId));
   }, []);
+
   if (loading) {
     return (
       <Spin
@@ -59,9 +63,11 @@ export const DetailPage: React.FC<RouteComponentProps<MatchParams>> = () => {
       />
     );
   }
+
   if (error) {
     return <div>网站出错：{error}</div>;
   }
+
   return (
     <MainLayout>
       {/* 产品简介 与 日期选择 */}

@@ -10,6 +10,12 @@ interface PropsType extends RouteComponentProps {
   title: string;
 }
 
+/**
+ * 由于productionImage上绑定了点击跳转到详情页的事件，所以，我们一般将这种组件用react-router的高阶组件方法来包裹。
+ * 这个时候 PropsType 就需要继承自 RouteComponentProps，跳转用 history 方式，当然，我们还可以直接用 Link
+ *
+ * 除了HOC方式实现传递路由数据，还可以用hooks来实现，在Header.tsx组件中可以看到
+ */
 const ProductImageComponent: React.FC<PropsType> = ({
   id,
   size,
@@ -18,14 +24,15 @@ const ProductImageComponent: React.FC<PropsType> = ({
   title,
   history,
   location,
-  match
+  match,
 }) => {
   // console.log(history)
   // console.log(location)
   // console.log(match)
   return (
+    // <div onClick={()=> history.push(`detail/${id}`)}>
     <Link to={`detail/${id}`}>
-      {size == "large" ? (
+      {size === "large" ? (
         <Image src={imageSrc} height={285} width={490} />
       ) : (
         <Image src={imageSrc} height={120} width={240} />
@@ -37,6 +44,7 @@ const ProductImageComponent: React.FC<PropsType> = ({
         </Typography.Text>
       </div>
     </Link>
+    // </div>
   );
 };
 

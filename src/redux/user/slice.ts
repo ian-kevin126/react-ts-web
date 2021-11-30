@@ -16,16 +16,17 @@ const initialState: UserState = {
 
 export const signIn = createAsyncThunk(
   "user/signIn",
-  async (paramaters: {
-      email: string,
-      password: string,
-  }, thunkAPI) => {
-    const { data } = await axios.post(
-      `http://123.56.149.216:8080/auth/login`,{
-          email: paramaters.email,
-          password: paramaters.password
-      }
-    );
+  async (
+    paramaters: {
+      email: string;
+      password: string;
+    },
+    thunkAPI
+  ) => {
+    const { data } = await axios.post(`http://123.56.149.216:8080/auth/login`, {
+      email: paramaters.email,
+      password: paramaters.password,
+    });
     return data.token;
   }
 );

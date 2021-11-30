@@ -15,26 +15,27 @@ const tailLayout = {
 };
 
 export const SignInForm = () => {
-
-  const loading = useSelector(s => s.user.loading)
-  const jwt = useSelector(s => s.user.token)
-  const error = useSelector(s => s.user.error)
+  const loading = useSelector((s) => s.user.loading);
+  const jwt = useSelector((s) => s.user.token);
+  const error = useSelector((s) => s.user.error);
 
   const dispatch = useDispatch();
   const history = useHistory();
 
-  useEffect(()=>{ 
-    if(jwt !== null) {
+  useEffect(() => {
+    if (jwt !== null) {
       history.push("/");
     }
-  }, [jwt])
+  }, [jwt]);
 
   const onFinish = (values: any) => {
     console.log("Success:", values);
-    dispatch(signIn({
-      email: values.username,
-      password: values.password
-    }))
+    dispatch(
+      signIn({
+        email: values.username,
+        password: values.password,
+      })
+    );
   };
 
   const onFinishFailed = (errorInfo: any) => {

@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware } from "redux";
 import languageReducer from "./language/languageReducer";
 import recommendProductsReducer from "./recommendProducts/recommendProductsReducer";
 import thunk from "redux-thunk";
@@ -15,20 +15,20 @@ import { orderSlice } from "./order/slice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user"]
-}
+  whitelist: ["user"],
+};
 
 const rootReducer = combineReducers({
-    language: languageReducer,
-    recommendProducts: recommendProductsReducer,
-    productDetail: productDetailSlice.reducer,
-    productSearch: productSearchSlice.reducer,
-    user: userSlice.reducer,
-    shoppingCart: shoppingCartSlice.reducer,
-    order: orderSlice.reducer
-})
+  language: languageReducer,
+  recommendProducts: recommendProductsReducer,
+  productDetail: productDetailSlice.reducer,
+  productSearch: productSearchSlice.reducer,
+  user: userSlice.reducer,
+  shoppingCart: shoppingCartSlice.reducer,
+  order: orderSlice.reducer,
+});
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // const store = createStore(rootReducer, applyMiddleware(thunk, actionLog));
 const store = configureStore({
@@ -37,8 +37,8 @@ const store = configureStore({
   devTools: true,
 });
 
-const persistor = persistStore(store)
+const persistor = persistStore(store);
 
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>;
 
 export default { store, persistor };

@@ -22,7 +22,7 @@ import jwt_decode, { JwtPayload as DefaultJwtPayload } from "jwt-decode";
 import { userSlice } from "../../redux/user/slice";
 
 interface JwtPayload extends DefaultJwtPayload {
-  username: string
+  username: string;
 }
 
 export const Header: React.FC = () => {
@@ -36,18 +36,18 @@ export const Header: React.FC = () => {
   // const dispatch = useDispatch<Dispatch<LanguageActionTypes>>();
   const { t } = useTranslation();
 
-  const jwt = useSelector(s => s.user.token)
-  const [username, setUsername] = useState("")
+  const jwt = useSelector((s) => s.user.token);
+  const [username, setUsername] = useState("");
 
-  const shoppingCartItems = useSelector(s => s.shoppingCart.items)
-  const shoppingCartLoading = useSelector(s => s.shoppingCart.loading)
+  const shoppingCartItems = useSelector((s) => s.shoppingCart.items);
+  const shoppingCartLoading = useSelector((s) => s.shoppingCart.loading);
 
-  useEffect(()=>{
-    if(jwt){
-      const token = jwt_decode<JwtPayload>(jwt)
-      setUsername(token.username)
+  useEffect(() => {
+    if (jwt) {
+      const token = jwt_decode<JwtPayload>(jwt);
+      setUsername(token.username);
     }
-  }, [jwt])
+  }, [jwt]);
 
   const menuClickHandler = (e) => {
     console.log(e);
@@ -60,9 +60,9 @@ export const Header: React.FC = () => {
   };
 
   const onLogout = () => {
-    dispatch(userSlice.actions.logOut())
-    history.push("/")
-  }
+    dispatch(userSlice.actions.logOut());
+    history.push("/");
+  };
 
   return (
     <div className={styles["app-header"]}>
