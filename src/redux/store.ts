@@ -16,6 +16,7 @@ const persistConfig = {
   key: "root",
   storage,
   whitelist: ["user"],
+  // stateReconciler: autoMergeLevel2, // 查看 'Merge Process' 部分的具体情况
 };
 
 const rootReducer = combineReducers({

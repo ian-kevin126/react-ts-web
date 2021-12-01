@@ -117,6 +117,7 @@ export const shoppingCartSlice = createSlice({
       state.loading = true;
     },
     [clearShoppingCartItem.fulfilled.type]: (state) => {
+      // 在购物车中只是清空了购物车，并没有做支付的逻辑
       state.items = [];
       state.loading = false;
       state.error = null;
@@ -136,10 +137,7 @@ export const shoppingCartSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
-    [checkout.rejected.type]: (
-      state,
-      action: PayloadAction<string | null>
-    ) => {
+    [checkout.rejected.type]: (state, action: PayloadAction<string | null>) => {
       state.loading = false;
       state.error = action.payload;
     },
