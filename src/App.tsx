@@ -48,6 +48,8 @@ function App() {
    * -1，路由导航与原生浏览器操作行为一致——使用 <BrowserRouter></BrowserRouter>
    * -2，路由的路径解析原理与原生浏览器一致，可以自动识别url路径——使用 <Route />
    * -3，路径的切换以页面为单位，不要页面堆叠——使用 <Switch />
+   *
+   * ?：表示参数可选
    */
   return (
     <div className={styles.App}>

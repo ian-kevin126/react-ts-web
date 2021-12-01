@@ -36,6 +36,7 @@ export const DetailPage: React.FC<RouteComponentProps<MatchParams>> = () => {
   // const [product, setProduct] = useState<any>(null);
   // const [error, setError] = useState<string | null>(null);
 
+  // 使用了redux-toolikit之后，我们就可以将组件的数据获取转移到redux中去了
   const loading = useSelector((state) => state.productDetail.loading);
   const error = useSelector((state) => state.productDetail.error);
   const product = useSelector((state) => state.productDetail.data);

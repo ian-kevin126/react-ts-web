@@ -64,7 +64,7 @@ export const giveMeDataActionCreator =
         "http://123.56.149.216:8080/api/productCollections"
       );
       dispatch(fetchRecommendProductSuccessActionCreator(data));
-    } catch (error) {
+    } catch (error: any) {
       dispatch(fetchRecommendProductFailActionCreator(error.message));
     }
   };

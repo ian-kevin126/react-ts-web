@@ -31,9 +31,13 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // const store = createStore(rootReducer, applyMiddleware(thunk, actionLog));
+
+// 使用RTK的新方法来创建store
 const store = configureStore({
   reducer: persistedReducer,
+  // getDefaultMiddleware：redux-toolkit已经默认帮我们集成了redux-thunk和immer这两个中间件
   middleware: (getDefaultMiddleware) => [...getDefaultMiddleware(), actionLog],
+  // 通过开发者工具跟踪redux的执行
   devTools: true,
 });
 

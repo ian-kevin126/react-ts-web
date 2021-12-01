@@ -17,7 +17,10 @@ const defaultState: RecommendProductsState = {
   productList: [],
 };
 
-export default (state = defaultState, action: RecommendProductAction) => {
+const recommendProductsReducer = (
+  state = defaultState,
+  action: RecommendProductAction
+) => {
   switch (action.type) {
     case FETCH_RECOMMEND_PRODUCTS_START:
       return { ...state, loading: true };
@@ -29,3 +32,5 @@ export default (state = defaultState, action: RecommendProductAction) => {
       return state;
   }
 };
+
+export default recommendProductsReducer;
